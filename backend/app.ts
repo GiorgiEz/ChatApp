@@ -1,17 +1,14 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import cors from "cors";
-
 import userRoutes from './routes/userRoutes';
 import roomRoutes from './routes/roomRoutes'
 import messageRoutes from './routes/messageRoutes';
-
 import http from "http";
 import { Server } from 'socket.io';
 
 const app = express();
 const server = http.createServer(app);
-
 app.use(express.json());
 app.use(cors());
 
@@ -34,15 +31,8 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
-
     socket.on('message', (data) => {
         io.emit('message', data);
-        console.log(data)
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
     });
 });
 

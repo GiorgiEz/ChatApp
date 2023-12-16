@@ -4,6 +4,7 @@ import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
 import {useDispatch, useSelector} from "react-redux";
 import {setRooms} from "../../redux/actions";
+import {CancelButton} from "../buttons/CancelButton";
 
 export function EditRoomModal({room, setEditedRoom}){
     const modalRef = useRef(null);
@@ -19,7 +20,7 @@ export function EditRoomModal({room, setEditedRoom}){
 
     const handleEditRoom = async (e) => {
         e.preventDefault();
-        const editedRoom = {room_name: roomName === "" ? room.room_name : roomName,
+        const editedRoom = {room_name: roomName === "" ? room.room_name : roomName.toUpperCase(),
                             password: roomPassword === "" ? room.password : roomPassword}
         const response = await update(editedRoom)
         if (response.success) {
@@ -35,7 +36,7 @@ export function EditRoomModal({room, setEditedRoom}){
         >
             <div className="bg-white p-16 rounded-lg shadow-md" ref={modalRef}>
                 {error && <ErrorMessage errorMessage={error} callback={setEditedRoom}/>}
-                <p className={"flex items-center justify-center mb-10 text-4xl font-bold"}>{room.room_name}</p>
+                <p className={"flex items-center justify-center mb-10 text-4xl font-bold"}>{room.room_name.toUpperCase()}</p>
                 <form onSubmit={handleEditRoom}>
                     <div className={"flex flex-col"}>
                         <input
@@ -57,14 +58,11 @@ export function EditRoomModal({room, setEditedRoom}){
                                 !roomName && !roomPassword ? 'bg-red-300 cursor-not-allowed opacity-30' : 'bg-red-300 hover:bg-red-400'
                             } text-white rounded mr-4 font-semibold px-8 py-4 rounded-lg text-xl`}
                             disabled={!roomName && !roomPassword}
+                            type={"submit"}
                         >
                             Confirm
                         </button>
-                        <button
-                            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-8 py-4 rounded-lg text-xl"
-                            onClick={() => setEditedRoom(null)}>
-                            Cancel
-                        </button>
+                        <CancelButton onClickHandler={() => setEditedRoom(null)}/>
                     </div>
                 </form>
             </div>

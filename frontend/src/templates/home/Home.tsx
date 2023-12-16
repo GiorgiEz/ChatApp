@@ -10,6 +10,8 @@ import {RoomsList} from "../room/RoomsList";
 import {LoadingOverlay} from "../../LoadingScreen/LoadingOverlay";
 import {SearchRooms} from "../room/SearchRooms";
 import {ErrorMessage} from "../error/ErrorMessage";
+import {Icons} from "../../utils/Icons";
+import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
 
 export function Home(){
     const navigate = useNavigate();
@@ -24,9 +26,13 @@ export function Home(){
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
     useEffect(() => {
-        if (usersData.length) dispatch(setUsers(usersData));
-        if (roomsData.length) dispatch(setRooms(roomsData));
-        userNotFound(username, usersData, () => navigate("/UserNotFound"))
+        if (usersData.length) {
+            dispatch(setUsers(usersData));
+        }
+        if (roomsData.length) {
+            dispatch(setRooms(roomsData));
+        }
+        userNotFound(username, usersData, () => navigate("/not-found"))
     }, [dispatch, roomsData, usersData, username])
 
     return (
@@ -36,7 +42,12 @@ export function Home(){
             <LoadingOverlay isLoading={usersLoading || roomsLoading}/>
             <div className="bg-white rounded-lg p-4 shadow-md">
                 <div className="flex justify-between items-center">
-                    <DeleteUserModal/>
+                    <div className={"flex justify-center items-center mr-2"}>
+                        <div className="border border-solid border mr-2">
+                            <ClickableWithTooltip value={Icons.leftArrow} text={"Sign Out"} callback={() => navigate("/")}/>
+                        </div>
+                        <DeleteUserModal/>
+                    </div>
                     <div>
                         <button
                             className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2"
@@ -44,10 +55,9 @@ export function Home(){
                         > My Rooms
                         </button>
                         <button
-                            className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                            className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mt-1"
                             onClick={() => setShowCreateRoomModal(true)}
-                        >
-                            Create Room
+                        > Create Room
                         </button>
                     </div>
                     {showCreateRoomModal && <CreateRoomModal setShowModal={setShowCreateRoomModal}/>}

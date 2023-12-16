@@ -3,7 +3,6 @@ import {CRUD} from "../utils/Utils";
 
 const useCrud = (endpoint) => {
     const [error, setError] = useState("");
-    const [fetchedData, setFetchedData] = useState([]);
 
     const fetchData = async (method, data = null) => {
         let success = true
@@ -15,7 +14,6 @@ const useCrud = (endpoint) => {
             };
             const response = await fetch(`http://localhost:3000/${endpoint}`, config as RequestInit);
             if (response.ok) {
-                if (config.method === CRUD.READ) setFetchedData(await response.json());
             } else {
                 success = false
                 setError(`Failed to ${method} data`);
@@ -24,7 +22,7 @@ const useCrud = (endpoint) => {
             success = false
             setError('Internal Server Error: ' + error);
         }
-        return {success, fetchedData}
+        return {success}
     }
 
     const create = async (data) => await fetchData(CRUD.CREATE, data);

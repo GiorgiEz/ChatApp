@@ -6,6 +6,8 @@ import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
 import {getUserByUsername} from "../../utils/Utils";
 import {useSelector} from "react-redux";
+import {CancelButton} from "../buttons/CancelButton";
+import {DeleteButton} from "../buttons/DeleteButton";
 
 export function DeleteUserModal(){
     const modalRef = useRef(null);
@@ -18,12 +20,14 @@ export function DeleteUserModal(){
     const user = getUserByUsername(username, usersData)
 
     useClickOutside(modalRef, () => setShowDeleteUserModal(false));
-    const { remove, error } = useCrud(`users/${user?.user_id ?? -1}`);
+    const { remove, error } = useCrud(`users/${user?.user_id}`);
 
     const handleDeleteUser = async (e) => {
         e.preventDefault();
         const response = await remove();
-        if (response.success && !error) navigate("/")
+        if (response.success && !error) {
+            navigate("/")
+        }
     }
 
     return (
@@ -37,14 +41,8 @@ export function DeleteUserModal(){
                         <form onSubmit={handleDeleteUser}>
                             <h1 className="text-2xl font-semibold">Are you sure you want to delete?</h1>
                             <div className="flex justify-center mt-4">
-                                <button className="bg-red-300 hover:bg-red-500 text-white text-xl font-semibold  px-8 py-4 rounded-lg mr-4">
-                                    Delete
-                                </button>
-                                <button
-                                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-8 py-4 rounded-lg text-xl"
-                                    onClick={() => setShowDeleteUserModal(false)}>
-                                    Cancel
-                                </button>
+                                <DeleteButton/>
+                                <CancelButton onClickHandler={() => setShowDeleteUserModal(false)}/>
                             </div>
                             {error && <ErrorMessage errorMessage={error} callback={setShowDeleteUserModal}/>}
                         </form>

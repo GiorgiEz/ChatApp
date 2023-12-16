@@ -5,7 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await (await db).execute('SELECT * FROM user');
+        const query = 'SELECT * FROM user'
+        const [rows] = await (await db).execute(query);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -37,9 +38,15 @@ router.get('/:identifier', async (req, res) => {
 router.post('/', async (req, res) => {
     const { username, password } = req.body;
     try {
-        const [result] = await (await db).execute('INSERT INTO user (username, password) VALUES (?, ?)', [username, password ?? ""]);
-        if ((result as {affectedRows: number}).affectedRows === 1) res.status(201).json({ message: 'User added successfully' });
-        else res.status(500).json({ error: 'Failed to add the user' });
+        const query = 'INSERT INTO user (username, password) VALUES (?, ?)'
+        const [result] = await (await db).execute(query, [username, password ?? ""]);
+
+        if ((result as {affectedRows: number}).affectedRows === 1) {
+            res.status(201).json({ message: 'User added successfully' });
+        }
+        else {
+            res.status(500).json({ error: 'Failed to add the user' });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -47,11 +54,11 @@ router.post('/', async (req, res) => {
 });
 
 router.delete('/:user_id', async (req, res) => {
-    const { user_id } = req.params; // Get the user_id from the request parameters
+    const { user_id } = req.params;
 
     try {
-        // Execute a SQL query to delete the user with the given user_id
-        const [result] = await (await db).execute('DELETE FROM user WHERE user_id = ?', [user_id]);
+        const query = 'DELETE FROM user WHERE user_id = ?'
+        const [result] = await (await db).execute(query, [user_id]);
 
         if ((result as { affectedRows: number }).affectedRows === 1) {
             res.json({ message: 'User deleted successfully' });

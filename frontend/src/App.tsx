@@ -1,10 +1,10 @@
 import './App.css'
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {Home} from "./templates/home/Home";
-import {SignUp} from "./templates/SignUp";
+import {SignUp} from "./templates/signUp/SignUp";
 import {Room} from "./templates/room/Room";
 import {MyRooms} from "./templates/room/MyRooms";
-import {UserNotFound} from "./templates/error/UserNotFound";
+import {NotFound} from "./templates/error/NotFound";
 import {useFetch} from "./hooks/useFetch";
 import {useEffect} from "react";
 import {setUsers} from "./redux/actions";
@@ -17,7 +17,9 @@ function App() {
     const { data: usersData, loading, error } = useFetch('http://localhost:3000/users');
 
     useEffect(() => {
-        if (usersData.length) dispatch(setUsers(usersData));
+        if (usersData.length) {
+            dispatch(setUsers(usersData));
+        }
     }, [usersData, dispatch])
 
   return (
@@ -27,7 +29,7 @@ function App() {
           <Router>
               <Routes>
                   <Route path={"/"} element={<SignUp />} />
-                  <Route path={"/userNotFound"} element={<UserNotFound />} />
+                  <Route path={"/not-found"} element={<NotFound />} />
                   <Route path={"/home/:username"} element={<Home />} />
                   <Route path={"/home/:username/my_rooms"} element={<MyRooms />} />
                   <Route path={"/home/:username/room/:room_id"} element={<Room />} />
