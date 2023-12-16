@@ -22,9 +22,8 @@ const downArrow = (
     </svg>
 )
 
-
 export const Icons = {
     cancelButton: cancelButton,
     leftArrow: leftArrow,
-    downArrow: downArrow
+    downArrow: downArrow,
 }

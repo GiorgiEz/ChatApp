@@ -2,28 +2,28 @@ import {useFetch} from "../../hooks/useFetch";
 import {MessageType} from "../../utils/Types";
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {calculateTimeAgo, getUsernameByMessageUserId, userNotFound} from "../../utils/Utils";
-import {Icons} from "../../utils/Icons";
-import {useSelector} from "react-redux";
-import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
+import {roomNotFound, userNotFound} from "../../utils/Utils";
+import {useDispatch, useSelector} from "react-redux";
 import { io } from 'socket.io-client';
 import {LoadingOverlay} from "../../LoadingScreen/LoadingOverlay";
 import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
 import {BackButton} from "../buttons/BackButton";
+import {MessagesList} from "./MessagesList";
+import {RoomIsLockedModal} from "../modals/RoomIsLockedModal";
 
 export function Room(){
     const navigate = useNavigate()
     const { room_id, username } = useParams() as string
     const usersData = useSelector(state => state.user.users)
+    const lockedRoom = useSelector(state => state.room.lockedRoom)
 
     const {data: userData, loading: userLoading, error: usersError} = useFetch(`http://localhost:3000/users/${username}`)
     const user = userData[0]
     const {data: messagesData, loading: messagesLoading, error: messagesError} = useFetch(`http://localhost:3000/messages/${room_id}`)
-    const { data: roomsData, loading: roomsLoading, error: roomsError } = useFetch("http://localhost:3000/rooms");
+    const {data: roomsData, loading: roomsLoading, error: roomsError} = useFetch("http://localhost:3000/rooms");
 
     const [content, setContent] = useState("")
-    const [messagesLoadedCount, setMessagesLoadedCount] = useState(10)
     const [allMessages, setAllMessages] = useState([]);
 
     const socket = io('ws://localhost:3000')
@@ -31,7 +31,8 @@ export function Room(){
 
     useEffect(() => {
         if (messagesData) setAllMessages([...messagesData])
-        userNotFound(username, usersData, () => navigate("/UserNotFound"))
+        userNotFound(username, usersData, () => navigate("/not-found"))
+        roomNotFound(room_id, roomsData, () => navigate(`/home/${username}`))
     }, [usersData, username, messagesData])
 
     useEffect(() => {
@@ -62,40 +63,14 @@ export function Room(){
 
     return (
         <div className="flex flex-col h-screen bg-gray-100 p-6">
+            {lockedRoom && <RoomIsLockedModal room={lockedRoom}/>}
             {error && <ErrorMessage errorMessage={error}/>}
             {usersError && <ErrorMessage errorMessage={usersError.message}/>}
             {roomsError && <ErrorMessage errorMessage={roomsError.message}/>}
             {messagesError && <ErrorMessage errorMessage={messagesError.message}/>}
             <LoadingOverlay isLoading={userLoading || messagesLoading || roomsLoading}/>
             <BackButton data={roomsData.find(room => room.room_id === parseInt(room_id))?.room_name.toUpperCase()}/>
-            <div className="flex-1 overflow-y-auto p-4">
-                {allMessages.length === 0 && (
-                    <h1 className="flex justify-center items-center h-32 text-3xl text-gray-500">No Messages</h1>
-                )}
-                {allMessages.map((message: MessageType, index) => (
-                    <div key={index} className="mb-4">
-                        { index < messagesLoadedCount ?
-                        <div>
-                            {user &&
-                                <span className={`text-lg font-semibold ${message.user_id === user.user_id ? '' : 'text-red-500'}`}>
-                                    {message.user_id === user.user_id ? "You" : getUsernameByMessageUserId(message.user_id, usersData)}
-                                </span>
-                            }
-                            <div className="bg-white rounded-lg p-4 shadow">{message.content}</div>
-                            <div className="text-gray-500 text-xs mt-2">{calculateTimeAgo(message.timestamp)}</div>
-                        </div>
-                        : ""}
-                    </div>
-                ))}
-                {messagesLoadedCount < allMessages.length ?
-                    <div className={"flex align-center justify-center"}>
-                        <ClickableWithTooltip
-                            callback={() => setMessagesLoadedCount(messagesLoadedCount + 10)}
-                            text={"Load More"} value={Icons.downArrow}
-                        />
-                    </div> : ""
-                }
-            </div>
+            <MessagesList allMessages={allMessages} user={user}/>
             <div className="p-4">
                 <div className="flex">
                     <input

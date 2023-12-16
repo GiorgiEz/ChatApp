@@ -4,6 +4,8 @@ import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
 import {useDispatch, useSelector} from "react-redux";
 import {setRooms} from "../../redux/actions";
+import {CancelButton} from "../buttons/CancelButton";
+import {DeleteButton} from "../buttons/DeleteButton";
 
 export function DeleteRoomModal({room, setDeletedRoom}){
     const modalRef = useRef(null);
@@ -33,14 +35,8 @@ export function DeleteRoomModal({room, setDeletedRoom}){
                 <form onSubmit={handleDeleteRoom}>
                     <h1 className="text-2xl font-semibold">Are you sure you want to delete?</h1>
                     <div className="flex justify-center mt-4">
-                        <button className="bg-red-300 hover:bg-red-500 text-white text-xl font-semibold  px-8 py-4 rounded-lg mr-4">
-                            Delete
-                        </button>
-                        <button
-                            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold px-8 py-4 rounded-lg text-xl"
-                            onClick={() => setDeletedRoom(null)}>
-                                Cancel
-                        </button>
+                        <DeleteButton/>
+                        <CancelButton onClickHandler={() => setDeletedRoom(null)}/>
                     </div>
                 </form>
             </div>

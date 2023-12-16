@@ -8,12 +8,15 @@ export function ErrorMessage({errorMessage, callback}) {
     useEffect(() => {
         const timer = setInterval(() => {
             setTimeLeft((prevTime) => prevTime - 10)
-            if (timeLeft <= 0) return
+            if (timeLeft <= 0) {
+                return
+            }
         }, 10);
-        if (timeLeft === 0 && callback) callback(false)
-
+        if (timeLeft === 0 && callback) {
+            callback(false)
+        }
         return () => clearInterval(timer);
-    }, [dispatch, timeLeft])
+    }, [dispatch])
 
     return (
         <>

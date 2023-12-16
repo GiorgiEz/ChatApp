@@ -43,10 +43,9 @@ router.post('/', async (req, res) => {
 });
 
 router.delete('/:room_id', async (req, res) => {
-    const { room_id } = req.params; // Get the room_id from the request parameters
+    const { room_id } = req.params;
 
     try {
-        // Execute a SQL query to delete the room with the given room_id
         const query = 'DELETE FROM room WHERE room_id = ?'
         const [result] = await (await db).execute(query, [room_id]);
 
@@ -66,9 +65,8 @@ router.put('/:room_id', async (req, res) => {
     const { room_name, password } = req.body;
 
     try {
-        // Execute a SQL query to update the room with the given room_id
-        const sql = 'UPDATE room SET room_name = ?, password = ? WHERE room_id = ?';
-        const [updateResult] = await (await db).execute(sql, [room_name, password, room_id]);
+        const query = 'UPDATE room SET room_name = ?, password = ? WHERE room_id = ?';
+        const [updateResult] = await (await db).execute(query, [room_name, password, room_id]);
 
         if ((updateResult as { affectedRows: number }).affectedRows === 1) {
             res.json({ message: 'Room updated successfully' });

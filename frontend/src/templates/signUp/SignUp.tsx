@@ -1,9 +1,10 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {getUserByUsername} from "../utils/Utils";
-import useCrud from "../hooks/UseCrud";
-import {ErrorMessage} from "./error/ErrorMessage";
+import {getUserByUsername} from "../../utils/Utils";
+import useCrud from "../../hooks/UseCrud";
+import {ErrorMessage} from "../error/ErrorMessage";
+import bcrypt from "bcryptjs";
 
 export function SignUp(){
     const navigate = useNavigate()
@@ -11,25 +12,31 @@ export function SignUp(){
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [incorrectPassword, setIncorrectPassword] = useState("")
+    const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false)
 
     const { create, error } = useCrud('users');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const user = getUserByUsername(username, usersData)
+        // Check if the user already exists
+        const user = getUserByUsername(username, usersData);
+
         if (user) {
-            if (user.password === password) {
+            if (await bcrypt.compare(password, user.password)) {
+                localStorage.setItem(username, username)
                 navigate(`/home/${username}`);
                 setPassword('');
-            } else {
-                setIncorrectPassword("Incorrect password")
-            }
+                setIsPasswordIncorrect(false);
+            } else setIsPasswordIncorrect(true);
         } else {
-            const response = await create({ username, password });
+            // User does not exist, create a new user with hashed password
+            const hashedPassword = bcrypt.hashSync(password, 10);
+            const response = await create({ username, password: hashedPassword });
             if (response.success) {
+                localStorage.setItem(username, username);
                 navigate(`/home/${username}`);
                 setPassword('');
+                setIsPasswordIncorrect(false);
             }
         }
     }
@@ -51,7 +58,7 @@ export function SignUp(){
                         pattern=".*[a-zA-Z].*"
                         required
                     />
-                    {incorrectPassword && <p className="text-blue-500 text-sm mb-2">Username already exists</p>}
+                    {isPasswordIncorrect && <p className="text-blue-500 text-sm mb-2">Username already exists</p>}
                     {/^\d+$/.test(username) && <p className="text-red-500 text-sm mb-2">Username doesn't contain a letter</p>}
                     <input
                         className="w-96 p-3 border rounded mb-2"
@@ -62,7 +69,7 @@ export function SignUp(){
                         minLength={8}
                         required
                     />
-                    <p className="text-red-500 text-sm mb-2">{incorrectPassword}</p>
+                    {isPasswordIncorrect && <p className="text-red-500 text-sm mb-2">Incorrect password</p>}
 
                     {/* Todo */}
                     {/*<button*/}

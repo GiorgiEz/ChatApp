@@ -29,7 +29,9 @@ export function CreateRoomModal({setShowModal}){
         const roomNameUpperCase = roomName.toUpperCase();
         const room = rooms.find((r) => r.room_name === roomNameUpperCase);
 
-        if (room) setIncorrectRoomName('Room with this name already exists!');
+        if (room) {
+            setIncorrectRoomName('Room with this name already exists!');
+        }
         else {
             const response = await create({room_name: roomNameUpperCase, password: roomPassword, user_id: user.user_id,});
             if (response.success) {

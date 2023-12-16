@@ -5,7 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await (await db).execute('SELECT * FROM message');
+        const query = 'SELECT * FROM message'
+        const [rows] = await (await db).execute(query);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -14,11 +15,11 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/:room_id', async (req, res) => {
-    const { room_id } = req.params; // Get the room_id from the request parameters
+    const { room_id } = req.params;
 
     try {
-        // Execute a SQL query to fetch the messages with the given room_id
-        const [result] = await (await db).execute('SELECT * FROM message WHERE room_id = ? ORDER BY timestamp DESC', [room_id]);
+        const query = 'SELECT * FROM message WHERE room_id = ? ORDER BY timestamp DESC'
+        const [result] = await (await db).execute(query, [room_id]);
         res.json(result);
     } catch (error) {
         console.error(error);
@@ -30,8 +31,8 @@ router.post('/', async (req, res) => {
     const { content, user_id, room_id } = req.body;
 
     try {
-        const [result] = await (await db).execute('INSERT INTO message (content, user_id, room_id) VALUES (?, ?, ?)',
-            [content, user_id, room_id]);
+        const query = 'INSERT INTO message (content, user_id, room_id) VALUES (?, ?, ?)'
+        const [result] = await (await db).execute(query, [content, user_id, room_id]);
 
         if ((result as { affectedRows: number }).affectedRows === 1) {
             res.status(201).json({ message: 'Message was sent successfully' });

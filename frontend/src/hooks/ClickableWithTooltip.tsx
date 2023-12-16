@@ -6,12 +6,12 @@ const ClickableWithTooltip = ({ value, callback, text }) => {
     return (
         <div className="relative">
             <p
-                className={`text-gray-500 font-bold text-2xl cursor-pointer ${showText ? 'line-through' : ''}`}
+                className={`text-gray-500 font-bold text-4xl cursor-pointer ${showText ? 'line-through' : ''}`}
                 onMouseEnter={() => setShowText(true)}
                 onMouseLeave={() => setShowText(false)}
                 onClick={callback}
             >
-                {value}
+                {typeof value === "string" ? value.toUpperCase() : value}
             </p>
             <div
                 className={`absolute text-lg text-white font-bold bg-blue-200 p-2 rounded-md ${

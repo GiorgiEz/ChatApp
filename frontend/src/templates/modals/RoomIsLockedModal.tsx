@@ -2,19 +2,25 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useRef, useState} from "react";
 import {Icons} from "../../utils/Icons";
 import useClickOutside from "../../hooks/useClickOutside";
+import {useDispatch} from "react-redux";
+import {setLockedRoom} from "../../redux/actions";
 
-export function RoomIsLockedModal({room, setLockedRoom}){
+export function RoomIsLockedModal({room}){
     const modalRef = useRef(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const { username } = useParams() as string
 
     const [enteredPassword, setEnteredPassword] = useState<string | null>("")
 
-    useClickOutside(modalRef, () => setLockedRoom(false));
+    useClickOutside(modalRef, () => dispatch(setLockedRoom(false)));
 
     function handleSubmit(e){
         e.preventDefault()
-        if (room.password === enteredPassword) navigate(`/home/${username}/room/${room.room_id}`)
+        if (room.password === enteredPassword) {
+            navigate(`/home/${username}/room/${room.room_id}`)
+            dispatch(setLockedRoom(false))
+        }
         else setEnteredPassword(null)
     }
 
@@ -26,7 +32,7 @@ export function RoomIsLockedModal({room, setLockedRoom}){
             <div className="bg-white p-8 rounded-lg shadow-md" ref={modalRef}>
                 <div className={"flex justify-between"}>
                     <h1 className="text-2xl font-semibold mb-4">Room is locked</h1>
-                    <button className={"mb-2"} onClick={() => setLockedRoom(false)}>{Icons.cancelButton}</button>
+                    <button className={"mb-2"} onClick={() => dispatch(setLockedRoom(false))}>{Icons.cancelButton}</button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <input
@@ -37,7 +43,7 @@ export function RoomIsLockedModal({room, setLockedRoom}){
                     />
                     <p className="text-red-500 text-sm mb-2">{enteredPassword === null ? "Incorrect Password" : ""}</p>
                     <button
-                        className={`w-full p-3 ${
+                        className={`w-full p-3 font-bold ${
                             !enteredPassword? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-300 hover:bg-blue-400'
                         } text-white rounded mt-4`}
                         type="submit"

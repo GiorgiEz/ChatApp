@@ -1,4 +1,6 @@
-import {UserType} from "./Types";
+import {RoomType, UserType} from "./Types";
+import {setLockedRoom} from "../redux/actions";
+import {useDispatch} from "react-redux";
 
 export enum CRUD {
     CREATE = "POST",
@@ -15,11 +17,22 @@ export function getUsernameByMessageUserId(messageUserId: number, usersData: Use
 }
 
 export function getUserByUsername(username: string, users: UserType[]){
-    return users.find((user) => user.username === username)
+    return users.find(user => user.username.toLowerCase() === username.toLowerCase())
+}
+
+export function getRoomByRoomId(room_id: string, rooms: RoomType[]){
+    return rooms.find(room => room.room_id === parseInt(room_id))
 }
 
 export function userNotFound(username: string, usersData: UserType[], callback: () => void){
-    if (username && usersData.length && !getUserByUsername(username, usersData)) callback()
+    const storedUsername = localStorage.getItem(username);
+    if (storedUsername !== username) callback()
+    else if (username && usersData.length && !getUserByUsername(username, usersData)) callback()
+}
+
+export function roomNotFound(room_id: string, roomsData: RoomType[], callback: () => void){
+    const room = getRoomByRoomId(room_id, roomsData)
+    if (room_id && roomsData.length && !room) callback()
 }
 
 export function calculateTimeAgo(order_date): string {

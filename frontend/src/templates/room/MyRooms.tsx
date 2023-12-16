@@ -27,7 +27,7 @@ export function MyRooms(){
     const [usersRoomsError, setUsersRoomsError] = useState(null)
 
     useEffect(() => {
-        userNotFound(username, users, () => navigate("/UserNotFound"))
+        userNotFound(username, users, () => navigate("/not-found"))
         if (!user) return
         setUsersRoomsLoading(true)
         fetch(`http://localhost:3000/rooms/${user.user_id}`)
@@ -45,7 +45,7 @@ export function MyRooms(){
             {error && <ErrorMessage errorMessage={error.message}/>}
             {usersRoomsError && <ErrorMessage errorMessage={usersRoomsError.message}/>}
             <LoadingOverlay isLoading={userLoading || usersRoomsLoading}/>
-            <BackButton data={"My Rooms"}/>
+            <BackButton data={"MY ROOMS"}/>
             <SearchRooms roomsData={usersRooms}/>
             <RoomsList rooms={rooms} isMyRooms={true}/>
         </div>
