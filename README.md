@@ -1,5 +1,7 @@
 # Chat App
 
+## Important Note
+As of now, the database and backend for the Chat App are not hosted, and the provided screenshots and examples are based on a local development environment. 
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
