@@ -7,7 +7,8 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "start": "nodemon app.ts"
+    "start": "ts-node app.ts",
+    "startWatch": "nodemon app.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
