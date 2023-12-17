@@ -14,18 +14,27 @@ export function EditRoomModal({room, setEditedRoom}){
 
     const [roomName, setRoomName] = useState<string>("")
     const [roomPassword, setRoomPassword] = useState<string>("")
+    const [incorrectRoomName, setIncorrectRoomName] = useState("");
 
     useClickOutside(modalRef, () => setEditedRoom(false));
     const { update, error } = useCrud(`rooms/${room.room_id}`);
 
     const handleEditRoom = async (e) => {
         e.preventDefault();
-        const editedRoom = {room_name: roomName === "" ? room.room_name : roomName.toUpperCase(),
-                            password: roomPassword === "" ? room.password : roomPassword}
-        const response = await update(editedRoom)
-        if (response.success) {
-            dispatch(setRooms([...rooms.map(rm => rm.room_id === room.room_id ? {...rm, ...editedRoom} : rm)]))
-            setEditedRoom(false)
+        const room = rooms.find((r) => r.room_name === roomName.toUpperCase());
+
+        if (room) {
+            setIncorrectRoomName('Room with this name already exists!');
+        } else {
+            const editedRoom = {
+                room_name: roomName === "" ? room.room_name : roomName.toUpperCase(),
+                password: roomPassword === "" ? room.password : roomPassword
+            }
+            const response = await update(editedRoom)
+            if (response.success) {
+                dispatch(setRooms([...rooms.map(rm => rm.room_id === room.room_id ? {...rm, ...editedRoom} : rm)]))
+                setEditedRoom(false)
+            }
         }
     }
 
@@ -45,6 +54,7 @@ export function EditRoomModal({room, setEditedRoom}){
                             onChange={(e) => setRoomName(e.target.value)}
                             placeholder={"New Room Name"}
                         />
+                        <p className="text-red-500 text-sm mb-2">{incorrectRoomName}</p>
                         <input
                             className="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring focus:border-blue-500 mt-2"
                             type="text"
