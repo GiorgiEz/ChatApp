@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = 'SELECT * FROM user'
-        const [rows] = await (await db).execute(query);
+        const query = 'SELECT * FROM chatapp.users'
+        const { rows } = await db.query(query);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -21,13 +21,13 @@ router.get('/:identifier', async (req, res) => {
         const isNumeric = /^\d+$/.test(identifier);
         let query, params;
         if (isNumeric) {
-            query = 'SELECT * FROM user WHERE user_id = ?';
+            query = 'SELECT * FROM chatapp.users WHERE user_id = ?';
             params = [identifier];
         } else {
-            query = 'SELECT * FROM user WHERE username = ?';
+            query = 'SELECT * FROM chatapp.users WHERE username = ?';
             params = [identifier];
         }
-        const [rows] = await (await db).execute(query, params);
+        const { rows } = await db.query(query, params);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -37,11 +37,17 @@ router.get('/:identifier', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { username, password } = req.body;
-    try {
-        const query = 'INSERT INTO user (username, password) VALUES (?, ?)'
-        const [result] = await (await db).execute(query, [username, password ?? ""]);
 
-        if ((result as {affectedRows: number}).affectedRows === 1) {
+    // Basic validation
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    try {
+        const query = 'INSERT INTO chatapp.users (username, password) VALUES ($1, $2) RETURNING *';
+        const { rows } = await db.query(query, [username, password ?? ""]);
+
+        if (rows.length > 0) {
             res.status(201).json({ message: 'User added successfully' });
         }
         else {
@@ -51,16 +57,17 @@ router.post('/', async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+    console.log("Entered the post method to add user!", username, password);
 });
 
 router.delete('/:user_id', async (req, res) => {
     const { user_id } = req.params;
 
     try {
-        const query = 'DELETE FROM user WHERE user_id = ?'
-        const [result] = await (await db).execute(query, [user_id]);
+        const query = 'DELETE FROM chatapp.users WHERE user_id = ?'
+        const { rows } = await db.query(query, [user_id]);
 
-        if ((result as { affectedRows: number }).affectedRows === 1) {
+        if (rows.length > 0) {
             res.json({ message: 'User deleted successfully' });
         } else {
             res.status(404).json({ error: 'User not found' });

@@ -1,21 +1,22 @@
 import {useNavigate, useParams} from "react-router-dom";
-import React, {useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {Icons} from "../../utils/Icons";
 import useClickOutside from "../../hooks/useClickOutside";
 import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
 import {getUserByUsername} from "../../utils/Utils";
 import {useSelector} from "react-redux";
+import {UserType} from "../../utils/Types.ts";
 
-export function CreateRoomModal({setShowModal}){
+export function CreateRoomModal({setShowModal} : {setShowModal : any}) {
     const modalRef = useRef(null);
     const navigate = useNavigate();
-    const { username } = useParams() as string;
+    const { username } = useParams();
 
-    const users = useSelector(state => state.user.users);
-    const rooms = useSelector(state => state.room.rooms);
+    const users = useSelector((state: any) => state.user.users);
+    const rooms = useSelector((state: any) => state.room.rooms);
 
-    const user = getUserByUsername(username, users)
+    const user = getUserByUsername(username as string, users)
 
     const [roomName, setRoomName] = useState("");
     const [roomPassword, setRoomPassword] = useState("");
@@ -24,16 +25,16 @@ export function CreateRoomModal({setShowModal}){
     const { create, error } = useCrud('rooms');
     useClickOutside(modalRef, () => setShowModal(false));
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault();
         const roomNameUpperCase = roomName.toUpperCase();
-        const room = rooms.find((r) => r.room_name === roomNameUpperCase);
+        const room = rooms.find((r:any) => r.room_name === roomNameUpperCase);
 
         if (room) {
             setIncorrectRoomName('Room with this name already exists!');
         }
         else {
-            const response = await create({room_name: roomNameUpperCase, password: roomPassword, user_id: user.user_id,});
+            const response = await create({room_name: roomNameUpperCase, password: roomPassword, user_id: (user as UserType).user_id,});
             if (response.success) {
                 navigate(`/home/${username}/my_rooms`);
                 setShowModal(false);

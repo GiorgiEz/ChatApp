@@ -1,6 +1,6 @@
 import {useFetch} from "../../hooks/useFetch";
 import {useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {CreateRoomModal} from "../modals/CreateRoomModal";
 import {DeleteUserModal} from "../modals/DeleteUserModal";
 import {useDispatch, useSelector} from "react-redux";
@@ -16,12 +16,12 @@ import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
 export function Home(){
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { username } = useParams() as string;
+    const { username } = useParams();
 
-    const rooms = useSelector(state => state.room.rooms)
+    const rooms = useSelector((state: any) => state.room.rooms)
 
-    const { data: usersData, loading: usersLoading, error: usersError } = useFetch('http://localhost:3000/users');
-    const { data: roomsData, loading: roomsLoading, error: roomsError } = useFetch("http://localhost:3000/rooms");
+    const { data: usersData, loading: usersLoading, error: usersError } = useFetch('http://127.0.0.1:8000/api/users/');
+    const { data: roomsData, loading: roomsLoading, error: roomsError } = useFetch("http://127.0.0.1:8000/api/rooms/");
 
     const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
@@ -32,13 +32,13 @@ export function Home(){
         if (roomsData.length) {
             dispatch(setRooms(roomsData));
         }
-        userNotFound(username, usersData, () => navigate("/not-found"))
+        userNotFound(username as string, usersData, () => navigate("/not-found"))
     }, [dispatch, roomsData, usersData, username])
 
     return (
         <div className="bg-gray-100 h-screen p-6">
-            {usersError && <ErrorMessage errorMessage={usersError.message}/>}
-            {roomsError && <ErrorMessage errorMessage={roomsError.message}/>}
+            {usersError && <ErrorMessage errorMessage={usersError}/>}
+            {roomsError && <ErrorMessage errorMessage={roomsError}/>}
             <LoadingOverlay isLoading={usersLoading || roomsLoading}/>
             <div className="bg-white rounded-lg p-4 shadow-md">
                 <div className="flex justify-between items-center">

@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = 'SELECT * FROM message'
-        const [rows] = await (await db).execute(query);
+        const query = 'SELECT * FROM chatapp.messages'
+        const { rows } = await db.query(query);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -18,9 +18,9 @@ router.get('/:room_id', async (req, res) => {
     const { room_id } = req.params;
 
     try {
-        const query = 'SELECT * FROM message WHERE room_id = ? ORDER BY timestamp DESC'
-        const [result] = await (await db).execute(query, [room_id]);
-        res.json(result);
+        const query = 'SELECT * FROM chatapp.messages WHERE room_id = ? ORDER BY timestamp DESC'
+        const { rows } = await db.query(query, [room_id]);
+        res.json(rows);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -31,10 +31,10 @@ router.post('/', async (req, res) => {
     const { content, user_id, room_id } = req.body;
 
     try {
-        const query = 'INSERT INTO message (content, user_id, room_id) VALUES (?, ?, ?)'
-        const [result] = await (await db).execute(query, [content, user_id, room_id]);
+        const query = 'INSERT INTO chatapp.messages (content, user_id, room_id) VALUES (?, ?, ?)'
+        const { rows } = await db.query(query, [content, user_id, room_id]);
 
-        if ((result as { affectedRows: number }).affectedRows === 1) {
+        if (rows.length > 0) {
             res.status(201).json({ message: 'Message was sent successfully' });
         } else {
             res.status(500).json({ error: 'Failed to send the message' });

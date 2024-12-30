@@ -5,17 +5,17 @@ import useClickOutside from "../../hooks/useClickOutside";
 import {useDispatch} from "react-redux";
 import {setLockedRoom} from "../../redux/actions";
 
-export function RoomIsLockedModal({room}){
+export function RoomIsLockedModal({room} : {room: any}){
     const modalRef = useRef(null);
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const { username } = useParams() as string
+    const { username } = useParams()
 
     const [enteredPassword, setEnteredPassword] = useState<string | null>("")
 
     useClickOutside(modalRef, () => dispatch(setLockedRoom(false)));
 
-    function handleSubmit(e){
+    function handleSubmit(e:any){
         e.preventDefault()
         if (room.password === enteredPassword) {
             navigate(`/home/${username}/room/${room.room_id}`)

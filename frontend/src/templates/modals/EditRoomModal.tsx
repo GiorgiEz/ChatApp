@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import {useRef, useState} from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
@@ -6,11 +6,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {setRooms} from "../../redux/actions";
 import {CancelButton} from "../buttons/CancelButton";
 
-export function EditRoomModal({room, setEditedRoom}){
+export function EditRoomModal({room, setEditedRoom} : {room: any, setEditedRoom: any}){
     const modalRef = useRef(null);
     const dispatch = useDispatch()
 
-    const rooms = useSelector(state => state.room.rooms)
+    const rooms = useSelector((state: any) => state.room.rooms)
 
     const [roomName, setRoomName] = useState<string>("")
     const [roomPassword, setRoomPassword] = useState<string>("")
@@ -19,9 +19,9 @@ export function EditRoomModal({room, setEditedRoom}){
     useClickOutside(modalRef, () => setEditedRoom(false));
     const { update, error } = useCrud(`rooms/${room.room_id}`);
 
-    const handleEditRoom = async (e) => {
+    const handleEditRoom = async (e:any) => {
         e.preventDefault();
-        const room = rooms.find((r) => r.room_name === roomName.toUpperCase());
+        const room = rooms.find((r:any) => r.room_name === roomName.toUpperCase());
 
         if (room) {
             setIncorrectRoomName('Room with this name already exists!');
@@ -32,7 +32,7 @@ export function EditRoomModal({room, setEditedRoom}){
             }
             const response = await update(editedRoom)
             if (response.success) {
-                dispatch(setRooms([...rooms.map(rm => rm.room_id === room.room_id ? {...rm, ...editedRoom} : rm)]))
+                dispatch(setRooms([...rooms.map((rm:any) => rm.room_id === room.room_id ? {...rm, ...editedRoom} : rm)]))
                 setEditedRoom(false)
             }
         }

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import useClickOutside from "../../hooks/useClickOutside";
 import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
@@ -12,17 +12,17 @@ import {DeleteButton} from "../buttons/DeleteButton";
 export function DeleteUserModal(){
     const modalRef = useRef(null);
     const navigate = useNavigate();
-    const { username } = useParams() as string
+    const { username } = useParams()
 
-    const usersData = useSelector(state => state.user.users)
+    const usersData = useSelector((state : any) => state.user.users)
     const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
 
-    const user = getUserByUsername(username, usersData)
+    const user = getUserByUsername(username as string, usersData)
 
     useClickOutside(modalRef, () => setShowDeleteUserModal(false));
     const { remove, error } = useCrud(`users/${user?.user_id}`);
 
-    const handleDeleteUser = async (e) => {
+    const handleDeleteUser = async (e:any) => {
         e.preventDefault();
         const response = await remove();
         if (response.success && !error) {

@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import {useRef} from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import useCrud from "../../hooks/UseCrud";
 import {ErrorMessage} from "../error/ErrorMessage";
@@ -7,20 +7,20 @@ import {setRooms} from "../../redux/actions";
 import {CancelButton} from "../buttons/CancelButton";
 import {DeleteButton} from "../buttons/DeleteButton";
 
-export function DeleteRoomModal({room, setDeletedRoom}){
+export function DeleteRoomModal({room, setDeletedRoom} : {room: any, setDeletedRoom: any}) {
     const modalRef = useRef(null);
     const dispatch = useDispatch()
 
-    const rooms = useSelector(state => state.room.rooms)
+    const rooms = useSelector((state : any) => state.room.rooms)
 
     useClickOutside(modalRef, () => setDeletedRoom(false));
     const { remove, error } = useCrud(`rooms/${room.room_id}`);
 
-    const handleDeleteRoom = async (e) => {
+    const handleDeleteRoom = async (e : any) => {
         e.preventDefault();
         const response = await remove()
         if (response.success) {
-            dispatch(setRooms([...rooms.filter(rm => rm.room_id !== room.room_id)]))
+            dispatch(setRooms([...rooms.filter((rm : any) => rm.room_id !== room.room_id)]))
             setDeletedRoom(false)
         }
     }

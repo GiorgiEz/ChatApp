@@ -1,23 +1,33 @@
-import express from 'express';
-import mysql from 'mysql2/promise';
-import cors from "cors";
+const express = require('express');
+import { Pool } from 'pg';
+import cors = require("cors");
 import userRoutes from './routes/userRoutes';
 import roomRoutes from './routes/roomRoutes'
 import messageRoutes from './routes/messageRoutes';
-import http from "http";
+import * as http from "http";
 import { Server } from 'socket.io';
+import { config } from 'dotenv';
+
+// Load .env variables
+config()
 
 const app = express();
 const server = http.createServer(app);
 app.use(express.json());
 app.use(cors());
 
-export const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'chat_app',
-})
+export const db = new Pool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: parseInt(process.env.DB_PORT || '5432'),
+});
+
+// Test database connection
+db.connect()
+    .then(() => console.log('Connected to PostgreSQL database!'))
+    .catch((err) => console.error('Database connection error:', err.stack));
 
 app.use('/users', userRoutes);
 app.use('/rooms', roomRoutes);

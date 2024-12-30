@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-export function ErrorMessage({errorMessage, callback}) {
+export function ErrorMessage({errorMessage, callback}: {errorMessage?: string, callback?: (val: boolean) => void}) {
     const dispatch = useDispatch();
     const [timeLeft, setTimeLeft] = useState(3000);
 

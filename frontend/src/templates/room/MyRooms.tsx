@@ -1,5 +1,5 @@
 import {RoomType} from "../../utils/Types";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useFetch} from "../../hooks/useFetch";
 import {RoomsList} from "./RoomsList";
@@ -14,20 +14,20 @@ import {BackButton} from "../buttons/BackButton";
 export function MyRooms(){
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const { username } = useParams() as string;
+    const { username } = useParams();
 
-    const users = useSelector(state => state.user.users)
-    const rooms = useSelector(state => state.room.rooms)
+    const users = useSelector((state: any) => state.user.users)
+    const rooms = useSelector((state: any) => state.room.rooms)
 
-    const {data: userData, loading: userLoading, error} = useFetch(`http://localhost:3000/users/${username}`)
-    const user = userData[0]
+    const {data: userData, loading: userLoading, error} = useFetch(`http://127.0.0.1:8000/api/users/${username}`)
+    const user: any = userData[0]
 
     const [usersRooms, setUsersRooms] = useState<RoomType[]>([])
     const [usersRoomsLoading, setUsersRoomsLoading] = useState(false)
     const [usersRoomsError, setUsersRoomsError] = useState(null)
 
     useEffect(() => {
-        userNotFound(username, users, () => navigate("/not-found"))
+        userNotFound(username as string, users, () => navigate("/not-found"))
         if (!user) return
         setUsersRoomsLoading(true)
         fetch(`http://localhost:3000/rooms/${user.user_id}`)
@@ -42,8 +42,8 @@ export function MyRooms(){
 
     return (
         <div className={"bg-gray-100 h-screen p-6"}>
-            {error && <ErrorMessage errorMessage={error.message}/>}
-            {usersRoomsError && <ErrorMessage errorMessage={usersRoomsError.message}/>}
+            {error && <ErrorMessage errorMessage={error}/>}
+            {usersRoomsError && <ErrorMessage errorMessage={usersRoomsError}/>}
             <LoadingOverlay isLoading={userLoading || usersRoomsLoading}/>
             <BackButton data={"MY ROOMS"}/>
             <SearchRooms roomsData={usersRooms}/>

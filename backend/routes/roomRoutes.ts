@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const query = 'SELECT * FROM room ORDER BY timestamp DESC'
-        const [rows] = await (await db).execute(query);
+        const query = 'SELECT * FROM chatapp.rooms ORDER BY timestamp DESC'
+        const { rows } = await db.query(query);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -17,8 +17,8 @@ router.get('/', async (req, res) => {
 router.get('/:user_id', async (req, res) => {
     const { user_id } = req.params;
     try {
-        const query = 'SELECT * FROM room WHERE user_id = ? ORDER BY timestamp DESC'
-        const [rows] = await (await db).execute(query, [user_id]);
+        const query = 'SELECT * FROM chatapp.rooms WHERE user_id = $1 ORDER BY timestamp DESC'
+        const { rows } = await db.query(query, [user_id]);
         res.json(rows);
     } catch (error) {
         console.error(error);
@@ -29,9 +29,9 @@ router.get('/:user_id', async (req, res) => {
 router.post('/', async (req, res) => {
     const { room_name, password, user_id } = req.body;
     try {
-        const query = 'INSERT INTO room (room_name, password, user_id) VALUES (?, ?, ?)'
-        const [result] = await (await db).execute(query, [room_name, password, user_id ?? ""]);
-        if ((result as {affectedRows: number}).affectedRows === 1) {
+        const query = 'INSERT INTO chatapp.rooms (room_name, password, user_id) VALUES ($1, $2, $3)'
+        const { rows } = await db.query(query, [room_name, password, user_id ?? ""]);
+        if (rows.length > 0) {
             res.status(201).json({ message: 'Room added successfully' });
         } else {
             res.status(500).json({ error: 'Failed to add the room' });
@@ -46,10 +46,10 @@ router.delete('/:room_id', async (req, res) => {
     const { room_id } = req.params;
 
     try {
-        const query = 'DELETE FROM room WHERE room_id = ?'
-        const [result] = await (await db).execute(query, [room_id]);
+        const query = 'DELETE FROM chatapp.rooms WHERE room_id = ?'
+        const { rows } = await db.query(query, [room_id]);
 
-        if ((result as { affectedRows: number }).affectedRows === 1) {
+        if (rows.length > 0) {
             res.json({ message: 'Room deleted successfully' });
         } else {
             res.status(404).json({ error: 'Room not found' });
@@ -65,10 +65,10 @@ router.put('/:room_id', async (req, res) => {
     const { room_name, password } = req.body;
 
     try {
-        const query = 'UPDATE room SET room_name = ?, password = ? WHERE room_id = ?';
-        const [updateResult] = await (await db).execute(query, [room_name, password, room_id]);
+        const query = 'UPDATE chatapp.rooms SET room_name = ?, password = ? WHERE room_id = ?';
+        const { rows } = await db.query(query, [room_name, password, room_id]);
 
-        if ((updateResult as { affectedRows: number }).affectedRows === 1) {
+        if (rows.length > 0) {
             res.json({ message: 'Room updated successfully' });
         } else {
             res.status(404).json({ error: 'Room not found' });

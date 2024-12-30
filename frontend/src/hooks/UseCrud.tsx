@@ -1,10 +1,10 @@
 import {useCallback, useState} from 'react';
 import {CRUD} from "../utils/Utils";
 
-const useCrud = (endpoint) => {
+const useCrud = (endpoint:any) => {
     const [error, setError] = useState("");
 
-    const fetchData = async (method, data = null) => {
+    const fetchData = async (method:any, data = null) => {
         let success = true
         try {
             const config = {
@@ -12,7 +12,7 @@ const useCrud = (endpoint) => {
                 headers: {'Content-Type': 'application/json',},
                 body: data ? JSON.stringify(data) : null,
             };
-            const response = await fetch(`http://localhost:3000/${endpoint}`, config as RequestInit);
+            const response = await fetch(`http://127.0.0.1:8000/api/${endpoint}/`, config as RequestInit);
             if (response.ok) {
             } else {
                 success = false
@@ -25,9 +25,9 @@ const useCrud = (endpoint) => {
         return {success}
     }
 
-    const create = async (data) => await fetchData(CRUD.CREATE, data);
+    const create = async (data:any) => await fetchData(CRUD.CREATE, data);
     const read = useCallback(async () => await fetchData(CRUD.READ), []);
-    const update = async (data) => await fetchData(CRUD.UPDATE, data);
+    const update = async (data:any) => await fetchData(CRUD.UPDATE, data);
     const remove = async () => await fetchData(CRUD.DELETE);
 
     return { create, read, update, remove, error };

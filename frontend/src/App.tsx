@@ -14,7 +14,7 @@ import {ErrorMessage} from "./templates/error/ErrorMessage";
 
 function App() {
     const dispatch = useDispatch()
-    const { data: usersData, loading, error } = useFetch('http://localhost:3000/users');
+    const { data: usersData, loading, error } = useFetch('http://127.0.0.1:8000/api/users/');
 
     useEffect(() => {
         if (usersData.length) {
@@ -24,7 +24,7 @@ function App() {
 
   return (
       <div>
-          {error ? <ErrorMessage errorMessage={error.message}/> : ""}
+          {error ? <ErrorMessage errorMessage={error}/> : ""}
           <LoadingOverlay isLoading={loading}/>
           <Router>
               <Routes>

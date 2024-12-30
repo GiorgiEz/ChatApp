@@ -1,13 +1,12 @@
-import React from "react";
 import {setRooms} from "../../redux/actions";
 import {useDispatch} from "react-redux";
 
-export function SearchRooms({roomsData}){
+export function SearchRooms({roomsData} : {roomsData: any}){
     const dispatch = useDispatch()
 
-    function searchRooms(e){
+    function searchRooms(e:any){
         const value = e.target.value.toUpperCase();
-        dispatch(setRooms([...roomsData.filter(room => room.room_name.toUpperCase().includes(value))]))
+        dispatch(setRooms([...roomsData.filter((room: any) => room.room_name.toUpperCase().includes(value))]))
     }
 
     return (

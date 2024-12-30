@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 export function SignUp(){
     const navigate = useNavigate()
-    const usersData = useSelector(state => state.user.users)
+    const usersData = useSelector((state :any) => state.user.users)
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -16,7 +16,7 @@ export function SignUp(){
 
     const { create, error } = useCrud('users');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault();
         // Check if the user already exists
         const user = getUserByUsername(username, usersData);

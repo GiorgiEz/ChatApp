@@ -1,10 +1,9 @@
 import {Icons} from "../../utils/Icons";
-import React from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-export function BackButton({data}){
+export function BackButton({data} : {data:any}){
     const navigate = useNavigate()
-    const { username } = useParams() as string;
+    const { username } = useParams();
 
     return (
         <>

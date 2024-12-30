@@ -2,11 +2,11 @@ import {MessageType} from "../../utils/Types";
 import {calculateTimeAgo, getUsernameByMessageUserId} from "../../utils/Utils";
 import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
 import {Icons} from "../../utils/Icons";
-import React, {useState} from "react";
+import {useState} from "react";
 import {useSelector} from "react-redux";
 
-export function MessagesList({allMessages, user}){
-    const usersData = useSelector(state => state.user.users)
+export function MessagesList({allMessages, user} : {allMessages: MessageType[], user: any}) {
+    const usersData = useSelector((state: any) => state.user.users)
 
     const [messagesLoadedCount, setMessagesLoadedCount] = useState(10)
 
@@ -25,7 +25,7 @@ export function MessagesList({allMessages, user}){
                                 </span>
                             }
                             <div className="bg-white rounded-lg p-4 shadow">{message.content}</div>
-                            <div className="text-gray-500 text-xs mt-2">{calculateTimeAgo(message.timestamp)}</div>
+                            <div className="text-gray-500 text-xs mt-2">{calculateTimeAgo({order_date: message.timestamp})}</div>
                         </div>
                         : ""}
                 </div>

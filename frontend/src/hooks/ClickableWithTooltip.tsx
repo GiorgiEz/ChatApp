@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const ClickableWithTooltip = ({ value, callback, text }) => {
+const ClickableWithTooltip = ({ value, callback, text }: {value:any, callback:any, text:any}) => {
     const [showText, setShowText] = useState(false);
 
     return (

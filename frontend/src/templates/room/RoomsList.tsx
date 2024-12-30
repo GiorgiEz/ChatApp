@@ -1,6 +1,6 @@
 import {RoomType} from "../../utils/Types";
 import {RoomIsLockedModal} from "../modals/RoomIsLockedModal";
-import React, {useState} from "react";
+import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {Icons} from "../../utils/Icons";
 import ClickableWithTooltip from "../../hooks/ClickableWithTooltip";
@@ -10,12 +10,12 @@ import {EditRoomModal} from "../modals/EditRoomModal";
 import {setLockedRoom} from "../../redux/actions";
 import {useDispatch, useSelector} from "react-redux";
 
-export function RoomsList({rooms, isMyRooms}){
+export function RoomsList({rooms, isMyRooms} : {rooms: any, isMyRooms?: boolean}) {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const { username } = useParams() as string;
+    const { username } = useParams();
 
-    const lockedRoom = useSelector(state => state.room.lockedRoom)
+    const lockedRoom = useSelector((state : any) => state.room.lockedRoom)
 
     const [deletedRoom, setDeletedRoom] = useState<RoomType | false>(false);
     const [editedRoom, setEditedRoom] = useState<RoomType | false>(false);
@@ -33,7 +33,7 @@ export function RoomsList({rooms, isMyRooms}){
             {lockedRoom && <RoomIsLockedModal room={lockedRoom}/>}
             {deletedRoom && <DeleteRoomModal room={deletedRoom} setDeletedRoom={setDeletedRoom}/>}
             {editedRoom && <EditRoomModal room={editedRoom} setEditedRoom={setEditedRoom}/>}
-            {rooms.map((room: RoomType, index) => (
+            {rooms.map((room: RoomType, index: any) => (
                 <div key={room.room_id}>
                     { index < roomsLoadedCount ?
                     <div className="bg-blue-300 p-2 rounded mt-2 hover:bg-blue-400 transition duration-200 ease-in-out">
@@ -41,7 +41,7 @@ export function RoomsList({rooms, isMyRooms}){
                             <div>
                                 <p className="text-lg font-semibold text-white">{room.room_name.toUpperCase()}</p>
                                 <div className="text-gray-700 text-xs mt-2 hover:text-white text-bold">
-                                    created {calculateTimeAgo(room.timestamp)}
+                                    created {calculateTimeAgo({order_date: room.timestamp})}
                                 </div>
                             </div>
 
